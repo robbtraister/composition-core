@@ -2,11 +2,7 @@
 
 const express = require('express')
 
-function optionalImport (ref) {
-  try {
-    return require(ref)
-  } catch (_) {}
-}
+const { optionalImport } = require('../utils')
 
 function app (options = {}) {
   const app = express()
