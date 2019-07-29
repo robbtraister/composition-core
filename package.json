@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "prettier-standard {bin,env,src}/**/*.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags && [ -z \"$(node -p 'require(`./package.json`).version' | grep '-')\" ] && npm publish"
   },
   "keywords": [],
   "author": "",
