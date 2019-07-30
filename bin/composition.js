@@ -2,9 +2,28 @@
 
 'use strict'
 
-const cluster = require('../src/server/cluster')
+const childProcess = require('child_process')
+
+const server = require('../src/server/cluster')
+
+const {
+  core: {
+    projectRoot
+  }
+} = require('../env')
+
+function findModule (ref) {
+  try {
+    return require.resolve(ref)
+      .replace(
+        new RegExp(`([\\/]node_modules[\\/]${ref.replace(/[\\/]+$/, '')}).+`),
+        (_, $1) => $1
+      )
+  } catch (_) {}
+}
 
 function dev () {
+  watch()
   serve()
 }
 
@@ -22,17 +41,35 @@ commands:
 }
 
 function serve () {
-  cluster()
+  server()
 }
 
 function version () {
   console.log(`composition version: ${require('../package.json').version}`)
 }
 
+function watch () {
+  const location = findModule('@composition/react')
+  if (location) {
+    childProcess.spawn(
+      'npm',
+      ['run', 'watch'],
+      {
+        cwd: location,
+        env: {
+          PROJECT_ROOT: projectRoot
+        },
+        pipe: 'inherit'
+      }
+    )
+  }
+}
+
 const commands = {
   dev,
   help,
   serve,
+  start: serve,
   version
 }
 
