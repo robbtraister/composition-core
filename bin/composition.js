@@ -7,14 +7,13 @@ const childProcess = require('child_process')
 const server = require('../src/server/cluster')
 
 const {
-  core: {
-    projectRoot
-  }
+  core: { projectRoot }
 } = require('../env')
 
 function findModule (ref) {
   try {
-    return require.resolve(ref)
+    return require
+      .resolve(ref)
       .replace(
         new RegExp(`([\\/]node_modules[\\/]${ref.replace(/[\\/]+$/, '')}).+`),
         (_, $1) => $1
@@ -51,17 +50,13 @@ function version () {
 function watch () {
   const location = findModule('@composition/react')
   if (location) {
-    childProcess.spawn(
-      'npm',
-      ['run', 'watch'],
-      {
-        cwd: location,
-        env: {
-          PROJECT_ROOT: projectRoot
-        },
-        pipe: 'inherit'
-      }
-    )
+    childProcess.spawn('npm', ['run', 'watch'], {
+      cwd: location,
+      env: {
+        PROJECT_ROOT: projectRoot
+      },
+      pipe: 'inherit'
+    })
   }
 }
 
