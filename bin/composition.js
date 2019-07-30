@@ -4,7 +4,8 @@
 
 const childProcess = require('child_process')
 
-const server = require('../src/server/cluster')
+const cluster = require('../src/server/cluster')
+const server = require('../src/server')
 
 const {
   core: { projectRoot }
@@ -23,7 +24,7 @@ function findModule (ref) {
 
 function dev () {
   watch()
-  serve()
+  server()
 }
 
 function help () {
@@ -39,8 +40,8 @@ commands:
 `)
 }
 
-function serve () {
-  server()
+function start () {
+  cluster()
 }
 
 function version () {
@@ -63,12 +64,11 @@ function watch () {
 const commands = {
   dev,
   help,
-  serve,
-  start: serve,
+  start,
   version
 }
 
 if (module === require.main) {
   const cmd = process.argv[2]
-  ;(commands[cmd] || serve)(...process.argv.slice(3))
+  ;(commands[cmd] || start)(...process.argv.slice(3))
 }
