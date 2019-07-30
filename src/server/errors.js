@@ -2,12 +2,12 @@
 
 const failHandler = ({ isProd }) =>
   isProd
-    ? function failHandler (err, req, res, next) {
-        res.sendStatus(500)
-      }
+    ? function failHandler (_, req, res, next) {
+      res.sendStatus(500)
+    }
     : function failHandler (err, req, res, next) {
-        res.status(500).send(err.message || err.body || err)
-      }
+      res.status(500).send(err.message || err.body || err)
+    }
 
 const logHandler = options =>
   function logHandler (err, req, res, next) {
