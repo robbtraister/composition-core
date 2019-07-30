@@ -54,9 +54,10 @@ function watch () {
     childProcess.spawn('npm', ['run', 'watch'], {
       cwd: location,
       env: {
+        ...process.env,
         PROJECT_ROOT: projectRoot
       },
-      pipe: 'inherit'
+      stdio: 'inherit'
     })
   }
 }
