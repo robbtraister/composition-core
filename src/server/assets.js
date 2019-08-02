@@ -17,8 +17,10 @@ function router (options = {}) {
     router
       .use(
         route.replace(/^\/*/, '/').replace(/\/*$/, '/*'),
-        express.static(path.join(options.core.projectRoot, route)),
-        { fallthrough: false }
+        express.static(
+          path.join(options.core.projectRoot, route),
+          { fallthrough: false }
+        )
       )
   })
 
