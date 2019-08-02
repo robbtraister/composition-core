@@ -15,13 +15,9 @@ function router (options = {}) {
 
   ;[].concat(routes || []).forEach(route => {
     router
-      .use(
-        route.replace(/^\/*/, '/').replace(/\/*$/, '/*'),
-        express.static(
-          path.join(options.core.projectRoot, route),
-          { fallthrough: false }
-        )
-      )
+      .route(route.replace(/^\/*/, '/').replace(/\/*$/, '/*'))
+      .get(express.static(options.core.projectRoot, { fallthrough: false }))
+      .all((req, res, next) => { res.sendStatus(405) })
   })
 
   return router
