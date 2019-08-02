@@ -1,5 +1,7 @@
 'use strict'
 
+const path = require('path')
+
 const express = require('express')
 
 function router (options = {}) {
@@ -13,11 +15,11 @@ function router (options = {}) {
 
   ;[].concat(routes || []).forEach(route => {
     router
-      .route(`/${route.replace(/^\/+/, '').replace(/\/+$/, '')}/*`)
-      .get(express.static(options.core.projectRoot, { fallthrough: false }))
-      .all((req, res, next) => {
-        res.sendStatus(405)
-      })
+      .use(
+        route.replace(/^\/*/, '/').replace(/\/*$/, '/*'),
+        express.static(path.join(options.core.projectRoot, route)),
+        { fallthrough: false }
+      )
   })
 
   return router
