@@ -2,6 +2,13 @@
 
 const { optionalImport } = require('./src/utils')
 
-module.exports = [].concat(
+const configs = [].concat(
   optionalImport('@composition/react/webpack.config.js')
 )
+
+module.exports = (env, argv) =>
+  configs.map(config =>
+    (config instanceof Function)
+      ? config(env, argv)
+      : config
+  )
