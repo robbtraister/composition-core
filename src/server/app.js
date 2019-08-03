@@ -9,6 +9,8 @@ function app (options = {}) {
 
   const app = express()
 
+  app.use(require('compression')())
+
   app.use(require('./assets')(options))
 
   if (!options.core.isProd) {
@@ -35,6 +37,7 @@ function app (options = {}) {
     }
   }
 
+  optionalUse('@composition/react/public')
   optionalUse('@composition/auth')
   optionalUse('@composition/react')
 

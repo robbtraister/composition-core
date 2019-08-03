@@ -49,17 +49,14 @@ function version () {
 }
 
 function watch () {
-  const location = findModule('@composition/react')
-  if (location) {
-    childProcess.spawn('npm', ['run', 'watch'], {
-      cwd: location,
-      env: {
-        ...process.env,
-        PROJECT_ROOT: projectRoot
-      },
-      stdio: 'inherit'
-    })
-  }
+  childProcess.spawn('npm', ['run', 'watch'], {
+    cwd: path.resolve(__dirname, '..'),
+    env: {
+      ...process.env,
+      PROJECT_ROOT: projectRoot
+    },
+    stdio: 'inherit'
+  })
 }
 
 const commands = {
