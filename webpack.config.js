@@ -7,8 +7,8 @@ const configs = [].concat(
 )
 
 module.exports = (env, argv) =>
-  configs.map(config =>
+  [].concat(...configs.map(config =>
     (config instanceof Function)
       ? config(env, argv)
       : config
-  )
+  ))
