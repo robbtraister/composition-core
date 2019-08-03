@@ -1,7 +1,5 @@
 'use strict'
 
-const path = require('path')
-
 const express = require('express')
 
 function router (options = {}) {
@@ -17,7 +15,9 @@ function router (options = {}) {
     router
       .route(route.replace(/^\/*/, '/').replace(/\/*$/, '/*'))
       .get(express.static(options.core.projectRoot, { fallthrough: false }))
-      .all((req, res, next) => { res.sendStatus(405) })
+      .all((req, res, next) => {
+        res.sendStatus(405)
+      })
   })
 
   return router
