@@ -6,12 +6,11 @@ const { optionalImport } = require('../utils')
 
 function getMiddlewares (options) {
   return [].concat(
-    ...[
-      '@composition/auth',
-      '@composition/react'
-    ].map((ref) => {
+    ...['@composition/auth', '@composition/react'].map(ref => {
       const mod = optionalImport(ref)
-      return [].concat(...[].concat(mod || []).map((middleware) => middleware(options)))
+      return [].concat(
+        ...[].concat(mod || []).map(middleware => middleware(options))
+      )
     })
   )
 }
@@ -39,7 +38,7 @@ function app (options = {}) {
       getMiddlewares(options)
         .reverse()
         .reduce(
-          (next, middleware) => (err) => {
+          (next, middleware) => err => {
             const isErrorHandler = middleware.length === 4
             if (err) {
               if (isErrorHandler) {
