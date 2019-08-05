@@ -4,6 +4,18 @@ const express = require('express')
 
 const { optionalImport } = require('../utils')
 
+function getMiddlewares (options) {
+  return [].concat(
+    ...[
+      '@composition/auth',
+      '@composition/react'
+    ].map((ref) => {
+      const mod = optionalImport(ref)
+      return [].concat(...[].concat(mod || []).map((middleware) => middleware(options)))
+    })
+  )
+}
+
 function app (options = {}) {
   options.core = options.core || {}
 
@@ -13,49 +25,42 @@ function app (options = {}) {
 
   app.use(require('./assets')(options))
 
-  if (!options.core.isProd) {
-    // clear require cache
+  if (options.core.isProd) {
+    app.use(getMiddlewares(options))
+  } else {
     app.use((req, res, next) => {
+      // clear require cache
       Object.keys(require.cache)
         .filter(mod => !/[\\/]node_modules[\\/]/.test(mod))
         .forEach(mod => {
           delete require.cache[mod]
         })
-      next()
-    })
-  }
 
-  function optionalUse (ref) {
-    if (options.core.isProd) {
-      const mod = optionalImport(ref)
-      mod && app.use(mod(options))
-    } else {
-      app.use((req, res, next) => {
-        const mod = optionalImport(ref)
-        mod ? mod(options)(req, res, next) : next()
-      })
-    }
-  }
-
-  optionalUse('@composition/react/public')
-  optionalUse('@composition/auth')
-  optionalUse('@composition/react')
-
-  if (options.core.isProd) {
-    app.use(require('./errors')(options))
-  } else {
-    app.use((err, req, res, next) => {
-      ;[]
-        .concat(require('./errors')(options) || [])
+      getMiddlewares(options)
         .reverse()
         .reduce(
-          (next, middleware) => () => {
-            middleware(err, req, res, next)
+          (next, middleware) => (err) => {
+            const isErrorHandler = middleware.length === 4
+            if (err) {
+              if (isErrorHandler) {
+                middleware(err, req, res, next)
+              } else {
+                next(err)
+              }
+            } else {
+              if (isErrorHandler) {
+                next()
+              } else {
+                middleware(req, res, next)
+              }
+            }
           },
           next
         )()
     })
   }
+
+  app.use(require('./errors')(options))
 
   return app
 }
