@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && webpack",
-    "clean": "rm -rf {build,dist}",
+    "clean": "rm -rf \"${PROJECT_ROOT:-.}\"/{build,dist}",
     "dev": "npm run watch & npm run start",
     "lint": "prettier-standard {bin,env,src}/**/*.js",
     "start": "node ./src/server",
