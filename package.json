@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npm run clean && webpack",
     "clean": "rm -rf {build,dist}",
+    "dev": "npm run watch & npm run start",
     "lint": "prettier-standard {bin,env,src}/**/*.js",
+    "start": "node ./src/server",
     "test": "npm run lint",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags && (if [ -z \"$(node -p 'require(`./package.json`).version' | grep '-')\" ]; then npm publish; else npm publish --tag \"$(node -p 'require(`./package.json`).version' | sed -e 's/.*-//' -e 's/\\..*//')\"; fi)",

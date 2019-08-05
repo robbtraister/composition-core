@@ -5,28 +5,9 @@
 const childProcess = require('child_process')
 const path = require('path')
 
-const cluster = require('../src/server/cluster')
-const server = require('../src/server')
-
 const {
   core: { projectRoot }
 } = require('../env')
-
-function findModule (ref) {
-  try {
-    return require
-      .resolve(ref)
-      .replace(
-        new RegExp(`([\\/]node_modules[\\/]${ref.replace(/[\\/]+$/, '')}).+`),
-        (_, $1) => $1
-      )
-  } catch (_) {}
-}
-
-function dev () {
-  watch()
-  server()
-}
 
 function help () {
   version()
@@ -41,16 +22,12 @@ commands:
 `)
 }
 
-function start () {
-  cluster()
-}
-
 function version () {
   console.log(`composition version: ${require('../package.json').version}`)
 }
 
-function watch () {
-  childProcess.spawn('npm', ['run', 'watch'], {
+function run (cmd) {
+  childProcess.spawn('npm', ['run', cmd], {
     cwd: path.resolve(__dirname, '..'),
     env: {
       ...process.env,
@@ -60,14 +37,16 @@ function watch () {
   })
 }
 
+const dev = () => run('dev')
+
 const commands = {
   dev,
   help,
-  start,
+  start: () => run('start'),
   version
 }
 
 if (module === require.main) {
   const cmd = process.argv[2]
-  ;(commands[cmd] || start)(...process.argv.slice(3))
+  ;(commands[cmd] || dev)(...process.argv.slice(3))
 }
