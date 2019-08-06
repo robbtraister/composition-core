@@ -11,9 +11,13 @@ function router (options = {}) {
   const router = express.Router()
 
   try {
-    router.use(favicon(path.join(options.core.projectRoot, 'resources', 'favicon.ico')))
+    router.use(
+      favicon(path.join(options.core.projectRoot, 'resources', 'favicon.ico'))
+    )
   } catch (_) {
-    router.all('/favicon.ico', (req, res, next) => { res.sendStatus(404) })
+    router.all('/favicon.ico', (req, res, next) => {
+      res.sendStatus(404)
+    })
   }
 
   const routes = Object.hasOwnProperty.call(options.core, 'assets')
