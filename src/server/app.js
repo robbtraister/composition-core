@@ -14,7 +14,9 @@ function getMiddleware (ref, options) {
 function getMiddlewares (options) {
   // if @composition/auth is not installed, prevent the /auth path from being passed to other modules
   const authHandler = express.Router()
-  authHandler.use('/auth', (req, res, next) => { res.sendStatus(404) })
+  authHandler.use('/auth', (req, res, next) => {
+    res.sendStatus(404)
+  })
 
   return [].concat(
     ...getMiddleware('@composition/auth', options),
