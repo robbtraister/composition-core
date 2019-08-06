@@ -26,6 +26,7 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "lodash.merge": "^4.6.2",
+    "serve-favicon": "^2.5.0",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6"
   },

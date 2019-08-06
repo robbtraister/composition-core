@@ -1,11 +1,20 @@
 'use strict'
 
+const path = require('path')
+
 const express = require('express')
+const favicon = require('serve-favicon')
 
 function router (options = {}) {
   options.core = options.core || {}
 
   const router = express.Router()
+
+  try {
+    router.use(favicon(path.join(options.core.projectRoot, 'resources', 'favicon.ico')))
+  } catch (_) {
+    router.all('/favicon.ico', (req, res, next) => { res.sendStatus(404) })
+  }
 
   const routes = Object.hasOwnProperty.call(options.core, 'assets')
     ? options.core.assets
