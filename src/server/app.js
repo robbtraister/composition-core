@@ -4,14 +4,22 @@ const express = require('express')
 
 const { optionalImport } = require('../utils')
 
-function getMiddlewares (options) {
+function getMiddleware (ref, options) {
+  const mod = optionalImport(ref)
   return [].concat(
-    ...['@composition/auth', '@composition/react'].map(ref => {
-      const mod = optionalImport(ref)
-      return [].concat(
-        ...[].concat(mod || []).map(middleware => middleware(options))
-      )
-    })
+    ...[].concat(mod || []).map(middleware => middleware(options))
+  )
+}
+
+function getMiddlewares (options) {
+  // if @composition/auth is not installed, prevent the /auth path from being passed to other modules
+  const authHandler = express.Router()
+  authHandler.use('/auth', (req, res, next) => { res.sendStatus(404) })
+
+  return [].concat(
+    ...getMiddleware('@composition/auth', options),
+    authHandler,
+    ...getMiddleware('@composition/react', options)
   )
 }
 
