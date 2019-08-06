@@ -13,22 +13,32 @@ const projectRoot = process.env.PROJECT_ROOT || path.resolve('.')
 
 function getConfigs () {
   try {
-    return require(path.resolve(projectRoot, 'package.json')).composition
+    return require(path.resolve(projectRoot, 'package.json')).composition || {}
   } catch (_) {}
+  return {}
 }
 
-const configs = getConfigs() || {}
+function optionalConfigs (ref) {
+  return optionalImport(ref) || (() => ({}))
+}
 
-module.exports = _merge(configs, {
-  ...optionalImport('@composition/auth/env'),
-  ...optionalImport('@composition/react/env'),
-  core: {
-    isProd,
-    port: configs.port || Number(process.env.PORT) || 8080,
-    projectRoot,
-    workerCount:
-      configs.workerCount ||
-      Number(process.env.WORKER_COUNT) ||
-      require('os').cpus().length
+const configs = getConfigs()
+
+module.exports = _merge(
+  {
+    ...optionalConfigs('@composition/auth/env')(configs),
+    ...optionalConfigs('@composition/react/env')(configs)
+  },
+  configs,
+  {
+    core: {
+      isProd,
+      port: Number(process.env.PORT) || configs.port || 8080,
+      projectRoot,
+      workerCount:
+        Number(process.env.WORKER_COUNT) ||
+        configs.workerCount ||
+        require('os').cpus().length
+    }
   }
-})
+)
